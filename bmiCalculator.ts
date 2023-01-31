@@ -6,7 +6,7 @@ function calculateBmi(height: number, weight: number) {
     return "Underweight";
   } else if (BMI < 24.9) {
     return "Normal range";
-  } else if (BMI < 29.9) {
+  } else {
     return "Overweight";
   }
 }
@@ -14,3 +14,5 @@ function calculateBmi(height: number, weight: number) {
 const height = Number(process.argv[2]);
 const weight = Number(process.argv[3]);
 console.log(calculateBmi(height, weight));
+
+export { calculateBmi };
