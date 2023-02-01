@@ -21,8 +21,6 @@ app.get("/bmi", (req, res) => {
 });
 
 app.post("/calculateExercises", (req, res) => {
-  console.log('req.body', req.body);
-  
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const { daily_exercises, target } = req.body;
   if([daily_exercises, target].includes(undefined)) {
