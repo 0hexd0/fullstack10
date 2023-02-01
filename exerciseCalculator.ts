@@ -8,9 +8,7 @@ interface ExeResult {
   average: number;
 }
 
-const target = 2;
-
-function calculateExercises(exeData: Array<number>): ExeResult {
+function calculateExercises(exeData: Array<number>, target: number): ExeResult {
   const average =
     exeData.reduce((prev, cur) => {
       return cur + prev;
@@ -35,5 +33,9 @@ function calculateExercises(exeData: Array<number>): ExeResult {
   };
 }
 
-const exeData = process.argv.slice(2).map(Number);
-console.log(calculateExercises(exeData));
+// const exeData = process.argv.slice(2).map(Number);
+// console.log(calculateExercises(exeData));
+
+export {
+  calculateExercises
+};
