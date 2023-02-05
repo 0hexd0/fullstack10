@@ -1,3 +1,5 @@
+import { Gender } from "./enums/gender";
+
 export interface Diagnos {
   code: string
   name: string
@@ -9,8 +11,12 @@ export interface Patient {
   name: string
   dateOfBirth: string
   ssn: string
-  gender: string
+  gender: Gender
   occupation: string
 }
 
-export type NonSensitivePatient= Omit<Patient, 'ssn'>;
+export type NewPatient = Omit<Patient, 'id'>;
+
+export type NonSensitivePatient = Omit<Patient, 'ssn'>;
+
+export type NewPatientFields = { name: unknown, dateOfBirth: unknown, ssn: unknown, gender: unknown, occupation: unknown };
