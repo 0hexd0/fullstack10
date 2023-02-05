@@ -1,29 +1,19 @@
-import patientsData from "../../data/patient.json";
+import patients from "../../data/patients";
 import { Patient, PublicPatient, NewPatient } from "../types";
 import { v1 as uuid } from "uuid";
-import toNewPatient from "../utils/toNewPatient";
-
-const patientsEntries: Patient[] = patientsData.map((obj) => {
-  const object = toNewPatient(obj) as Patient;
-  object.id = obj.id;
-  object.entries = [];
-  return object;
-});
 
 const getEntries = (): Patient[] => {
-  return patientsEntries;
+  return patients;
 };
 
 const getNonSensitiveEntries = (): PublicPatient[] => {
-  return patientsEntries.map(
-    ({ id, name, dateOfBirth, gender, occupation }) => ({
-      id,
-      name,
-      dateOfBirth,
-      gender,
-      occupation,
-    })
-  );
+  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+    id,
+    name,
+    dateOfBirth,
+    gender,
+    occupation,
+  }));
 };
 
 const addPatient = (newPatient: NewPatient) => {
@@ -31,12 +21,12 @@ const addPatient = (newPatient: NewPatient) => {
     id: uuid(),
     ...newPatient,
   };
-  patientsEntries.push(addedPatient);
+  patients.push(addedPatient);
   return addedPatient;
 };
 
 const getPatient = (id: string): Patient | undefined => {
-  const patient = patientsEntries.find((patient) => patient.id === id);
+  const patient = patients.find((patient) => patient.id === id);
   return patient;
 };
 

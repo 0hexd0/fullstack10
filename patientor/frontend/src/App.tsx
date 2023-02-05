@@ -27,6 +27,7 @@ const App = () => {
         console.error(e);
       }
     };
+
     void fetchPatientList();
   }, [dispatch]);
 

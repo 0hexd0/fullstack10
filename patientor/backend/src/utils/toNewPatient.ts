@@ -1,4 +1,4 @@
-import { Gender } from "../enums/gender";
+import { Gender } from "../types";
 import { NewPatient, NewPatientFields } from "../types";
 import { isString, isDate, isGender } from "./checker";
 
