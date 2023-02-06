@@ -9,7 +9,8 @@ const isNumber = (num: unknown): num is number => {
 };
 
 const isObject = (obj: unknown): obj is object => {
-  return Object.prototype.toString.call(obj) === "[Object Object]";
+  // return Object.prototype.toString.call(obj) === "[Object Object]";
+  return obj instanceof Object;
 };
 
 function isTObject<T extends object>(

@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-import { Patient, Gender, Diagnosis, Entry } from "../types";
+import { Patient, Gender, Diagnosis, Entry, EntryType } from "../types";
 
 import { Button } from "@mui/material";
 import { Male, Female, Transgender } from "@mui/icons-material";
@@ -45,14 +45,41 @@ const PatientDetailPage = () => {
     setError(undefined);
   };
 
+  const formatValues = (values: EntryFormValues) => {
+    if (values.type === EntryType.Hospital) {
+      if (values.dischargeDate && values.dischargeCriteria) {
+        values.discharge = {
+          date: values.dischargeDate,
+          criteria: values.dischargeCriteria,
+        };
+      }
+    } else if (values.type === EntryType.OccupationalHealthcare) {
+      if (values.sickLeaveStartDate && values.sickLeaveEndDate) {
+        values.sickLeave = {
+          startDate: values.sickLeaveStartDate,
+          endDate: values.sickLeaveEndDate,
+        };
+      }
+    }
+    if (values.type !== EntryType.OccupationalHealthcare) {
+      delete values.employerName;
+    }
+    delete values.dischargeDate;
+    delete values.dischargeCriteria;
+    delete values.sickLeaveStartDate;
+    delete values.sickLeaveEndDate;
+  };
+
   const submitNewEntry = async (values: EntryFormValues) => {
+    const valuesCopy = Object.assign({}, values);
     if (!patientId) {
       return;
     }
+    formatValues(valuesCopy);
     try {
       const { data: newEntry } = await axios.post<Entry>(
         `${apiBaseUrl}/patients/${patientId}/entries`,
-        values
+        valuesCopy
       );
       dispatch(addEntry(patientId, newEntry));
       closeModal();

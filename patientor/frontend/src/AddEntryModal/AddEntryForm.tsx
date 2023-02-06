@@ -8,14 +8,34 @@ import {
   SelectFieldOption,
   DiagnosisSelection,
 } from "./FormField";
-import { EntryType, NewEntry } from "../types";
+import { EntryType } from "../types";
 import { useStateValue } from "../state";
 
 /*
  * use type Patient, but omit id and entries,
  * because those are irrelevant for new patient object.
  */
-export type EntryFormValues = NewEntry;
+export type EntryFormValues = {
+  type: EntryType;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes: Array<string>;
+  healthCheckRating?: number;
+  employerName?: string;
+  sickLeave?: {
+    startDate: string;
+    endDate: string;
+  };
+  sickLeaveStartDate?: string;
+  sickLeaveEndDate?: string;
+  discharge?: {
+    date: string;
+    criteria: string;
+  };
+  dischargeDate?: string;
+  dischargeCriteria?: string;
+};
 
 interface Props {
   onSubmit: (values: EntryFormValues) => void;
@@ -46,7 +66,15 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
         specialist: "",
         diagnosisCodes: [],
         description: "",
+        // for HealthCheckEntry
         healthCheckRating: 0,
+        // for OccupationalHealthcareEntry
+        employerName: "",
+        sickLeaveStartDate: "",
+        sickLeaveEndDate: "",
+        // for HospitalEntry
+        dischargeDate: "",
+        dischargeCriteria: "",
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -61,10 +89,34 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.specialist) {
           errors.specialist = requiredError;
         }
+        if (values.type === EntryType.Hospital) {
+          if (!values.dischargeDate) {
+            errors.dischargeDate = requiredError;
+          }
+          if (!values.dischargeCriteria) {
+            errors.dischargeCriteria = requiredError;
+          }
+        }
+        if (values.type === EntryType.OccupationalHealthcare) {
+          if (!values.employerName) {
+            errors.employerName = requiredError;
+          }
+          if (!values.sickLeaveStartDate && values.sickLeaveEndDate) {
+            errors.sickLeaveStartDate = requiredError;
+          }
+          if (!values.sickLeaveEndDate && values.sickLeaveStartDate) {
+            errors.sickLeaveEndDate = requiredError;
+          }
+        }
         return errors;
       }}
     >
-      {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
+      {({ isValid, dirty, setFieldValue, setFieldTouched, values }) => {
+        const isHealthCheck = values.type === EntryType.HealthCheck;
+        const isHospital = values.type === EntryType.Hospital;
+        const isOccupationalHealthcare =
+          values.type === EntryType.OccupationalHealthcare;
+
         return (
           <Form className="form ui">
             <SelectField
@@ -101,11 +153,56 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
 
-            <SelectField
-              label="HealthCheckRating"
-              name="healthCheckRating"
-              options={healthCheckRatingOptions}
-            />
+            {isHealthCheck && (
+              <SelectField
+                label="HealthCheckRating"
+                name="healthCheckRating"
+                options={healthCheckRatingOptions}
+              />
+            )}
+
+            {isHospital && (
+              <>
+                <Field
+                  label="DischargeDate"
+                  placeholder="YYYY-MM-DD"
+                  name="dischargeDate"
+                  component={TextField}
+                />
+
+                <Field
+                  label="DischargeCriteria"
+                  placeholder="DischargeCriteria"
+                  name="dischargeCriteria"
+                  component={TextField}
+                />
+              </>
+            )}
+
+            {isOccupationalHealthcare && (
+              <>
+                <Field
+                  label="EmployerName"
+                  placeholder="EmployerName"
+                  name="employerName"
+                  component={TextField}
+                />
+
+                <Field
+                  label="SickLeaveStartDate"
+                  placeholder="YYYY-MM-DD"
+                  name="sickLeaveStartDate"
+                  component={TextField}
+                />
+
+                <Field
+                  label="SickLeaveEndDate"
+                  placeholder="YYYY-MM-DD"
+                  name="sickLeaveEndDate"
+                  component={TextField}
+                />
+              </>
+            )}
 
             <Grid>
               <Grid item>
