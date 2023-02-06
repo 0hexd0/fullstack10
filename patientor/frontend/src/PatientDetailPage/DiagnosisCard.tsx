@@ -42,7 +42,6 @@ const DiagnosisCard = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          flexWrap: "wrap",
         }}
       >
         <div style={{ color: "GrayText" }}>{entry.description}</div>

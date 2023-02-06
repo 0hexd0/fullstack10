@@ -2,15 +2,22 @@ import React from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 
-import { Patient, Gender, Diagnosis } from "../types";
+import { Patient, Gender, Diagnosis, Entry } from "../types";
 
 import { Button } from "@mui/material";
 import { Male, Female, Transgender } from "@mui/icons-material";
 
-import { addPatientDetail, setDiagnosisList, useStateValue } from "../state";
+import {
+  addEntry,
+  addPatientDetail,
+  setDiagnosisList,
+  useStateValue,
+} from "../state";
 import { apiBaseUrl } from "../constants";
 
 import DiagnosisCard from "./DiagnosisCard";
+import AddEntryModal from "../AddEntryModal";
+import { EntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 const GenderIcon = ({ gender }: { gender: Gender }) => {
   switch (gender) {
@@ -27,6 +34,40 @@ const PatientDetailPage = () => {
   const { id: patientId } = useParams<{ id: string }>();
   const [{ patientDetails, diagnoses }, dispatch] = useStateValue();
   const [patientDetail, setPatientDetail] = React.useState<Patient>();
+
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+
+  const submitNewEntry = async (values: EntryFormValues) => {
+    if (!patientId) {
+      return;
+    }
+    try {
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${patientId}/entries`,
+        values
+      );
+      dispatch(addEntry(patientId, newEntry));
+      closeModal();
+    } catch (e: unknown) {
+      if (axios.isAxiosError(e)) {
+        console.error(e?.response?.data || "Unrecognized axios error");
+        setError(
+          String(e?.response?.data?.error) || "Unrecognized axios error"
+        );
+      } else {
+        console.error("Unknown error", e);
+        setError("Unknown error");
+      }
+    }
+  };
 
   const fetchPatientDetail = async (patientId: string) => {
     await fetchDiagnosisList();
@@ -81,14 +122,25 @@ const PatientDetailPage = () => {
             display: "flex",
             justifyContent: "flex-start",
             paddingTop: "20px",
+            flexWrap: "wrap",
           }}
         >
           {patientDetail.entries.map((entry) => (
             <DiagnosisCard key={entry.id} diagnoses={diagnoses} entry={entry} />
           ))}
         </div>
+        <AddEntryModal
+          modalOpen={modalOpen}
+          onSubmit={submitNewEntry}
+          error={error}
+          onClose={closeModal}
+        />
         <div>
-          <Button variant="contained" style={{ marginTop: "20px" }}>
+          <Button
+            variant="contained"
+            style={{ marginTop: "20px" }}
+            onClick={() => openModal()}
+          >
             ADD NEW ENTRY
           </Button>
         </div>
