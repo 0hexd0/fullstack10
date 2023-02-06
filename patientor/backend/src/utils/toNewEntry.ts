@@ -60,7 +60,10 @@ const parseDiagnosisCodes = (diagnosisCodes: unknown) => {
 };
 
 const parseHealthCheckRating = (healthCheckRating: unknown) => {
-  if (!healthCheckRating || !isNumber(healthCheckRating)) {
+  if (
+    (!healthCheckRating && healthCheckRating !== 0) ||
+    !isNumber(healthCheckRating)
+  ) {
     throw new Error("Incorrect or missing healthCheckRating");
   }
   return healthCheckRating;
@@ -88,7 +91,9 @@ const toNewEntry = (object: EntryFields): NewEntry => {
   const entry: Omit<BaseEntry, "id"> = {
     description: parseDescription(object.description),
     date: parseDate(object.date),
-    diagnosisCodes: parseDiagnosisCodes(object.diagnosisCodes),
+    diagnosisCodes: object.diagnosisCodes
+      ? parseDiagnosisCodes(object.diagnosisCodes)
+      : undefined,
     specialist: parseSpecialist(object.specialist),
   };
   switch (type) {
@@ -96,9 +101,7 @@ const toNewEntry = (object: EntryFields): NewEntry => {
       return {
         type,
         ...entry,
-        healthCheckRating: parseHealthCheckRating(
-          object.parseHealthCheckRating
-        ),
+        healthCheckRating: parseHealthCheckRating(object.healthCheckRating),
       };
     case EntryType.Hospital:
       return {

@@ -96,7 +96,7 @@ export type EntryFields = {
   description: unknown;
   date: unknown;
   diagnosisCodes: unknown;
-  parseHealthCheckRating: unknown;
+  healthCheckRating: unknown;
   specialist: unknown;
   employerName: unknown;
   discharge: unknown;
