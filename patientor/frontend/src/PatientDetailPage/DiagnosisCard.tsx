@@ -34,7 +34,7 @@ const DiagnosisCard = ({
     <Card
       key={entry.id}
       style={{ marginBottom: "20px", marginLeft: "20px" }}
-      sx={{ width: 380 }}
+      sx={{ width: 360 }}
     >
       <CardHeader title={entry.date} />
       <CardContent
@@ -42,6 +42,7 @@ const DiagnosisCard = ({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
+          flexWrap: "wrap",
         }}
       >
         <div style={{ color: "GrayText" }}>{entry.description}</div>
@@ -54,7 +55,9 @@ const DiagnosisCard = ({
         </ul>
         <CardMain entry={entry}></CardMain>
         <Divider style={{ marginTop: "10px", marginBottom: "10px" }} light />
-        <div>diagnose by {entry.specialist}</div>
+        <div>
+          diagnose by <i>{entry.specialist}</i>
+        </div>
       </CardContent>
     </Card>
   );

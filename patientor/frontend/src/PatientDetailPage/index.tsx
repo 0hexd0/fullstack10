@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { Patient, Gender, Diagnosis } from "../types";
 
+import { Button } from "@mui/material";
 import { Male, Female, Transgender } from "@mui/icons-material";
 
 import { addPatientDetail, setDiagnosisList, useStateValue } from "../state";
@@ -85,6 +86,11 @@ const PatientDetailPage = () => {
           {patientDetail.entries.map((entry) => (
             <DiagnosisCard key={entry.id} diagnoses={diagnoses} entry={entry} />
           ))}
+        </div>
+        <div>
+          <Button variant="contained" style={{ marginTop: "20px" }}>
+            ADD NEW ENTRY
+          </Button>
         </div>
       </div>
     );
