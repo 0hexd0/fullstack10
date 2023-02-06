@@ -7,12 +7,12 @@ import {
   TextField as TextFieldMUI,
   Typography,
 } from "@mui/material";
-import { Diagnosis, EntryType } from "../types";
+import { Diagnosis } from "../types";
 import { InputLabel, Input } from "@mui/material";
 
 // structure of a single option
-export type EntryTypeOption = {
-  value: EntryType;
+export type SelectFieldOption = {
+  value: string | number;
   label: string;
 };
 
@@ -20,7 +20,7 @@ export type EntryTypeOption = {
 type SelectFieldProps = {
   name: string;
   label: string;
-  options: EntryTypeOption[];
+  options: SelectFieldOption[];
 };
 
 const FormikSelect = ({ field, ...props }: FieldProps) => (
@@ -75,24 +75,15 @@ interface NumberProps extends FieldProps {
 }
 
 export const NumberField = ({ field, label, min, max }: NumberProps) => {
-  const [value, setValue] = useState<number>();
-
   return (
     <div style={{ marginBottom: "1em" }}>
       <TextFieldMUI
         fullWidth
         label={label}
         placeholder={String(min)}
+        InputProps={{ inputProps: { min, max } }}
         type="number"
         {...field}
-        value={value}
-        onChange={(e) => {
-          const value = parseInt(e.target.value);
-          if (value === undefined) return;
-          if (value > max) setValue(max);
-          else if (value <= min) setValue(min);
-          else setValue(Math.floor(value));
-        }}
       />
       <Typography variant="subtitle2" style={{ color: "red" }}>
         <ErrorMessage name={field.name} />
@@ -102,20 +93,22 @@ export const NumberField = ({ field, label, min, max }: NumberProps) => {
 };
 
 export const DiagnosisSelection = ({
+  name,
   diagnoses,
   setFieldValue,
   setFieldTouched,
 }: {
+  name: string;
   diagnoses: Diagnosis[];
   setFieldValue: FormikProps<{ diagnosisCodes: string[] }>["setFieldValue"];
   setFieldTouched: FormikProps<{ diagnosisCodes: string[] }>["setFieldTouched"];
 }) => {
   const [selectedDiagnoses, setDiagnoses] = useState<string[]>([]);
-  const field = "diagnosisCodes";
+  const field = name;
   const onChange = (data: string[]) => {
     setDiagnoses([...data]);
     setFieldTouched(field, true);
-    setFieldValue(field, selectedDiagnoses);
+    setFieldValue(field, [...data]);
   };
 
   const stateOptions = diagnoses.map((diagnosis) => ({

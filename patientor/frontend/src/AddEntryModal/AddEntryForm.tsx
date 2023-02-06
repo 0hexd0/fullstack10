@@ -5,7 +5,7 @@ import { Field, Formik, Form } from "formik";
 import {
   TextField,
   SelectField,
-  EntryTypeOption,
+  SelectFieldOption,
   DiagnosisSelection,
 } from "./FormField";
 import { EntryType, NewEntry } from "../types";
@@ -22,10 +22,17 @@ interface Props {
   onCancel: () => void;
 }
 
-const entryTypeOptions: EntryTypeOption[] = [
+const entryTypeOptions: SelectFieldOption[] = [
   { value: EntryType.HealthCheck, label: "HealthCheck" },
   { value: EntryType.Hospital, label: "Hospital" },
   { value: EntryType.OccupationalHealthcare, label: "OccupationalHealthcare" },
+];
+
+const healthCheckRatingOptions: SelectFieldOption[] = [
+  { value: 0, label: "The patient is in great shape" },
+  { value: 1, label: "The patient has a low risk of getting sick" },
+  { value: 2, label: "The patient has a high risk of getting sick" },
+  { value: 3, label: "The patient has a diagnosed condition" },
 ];
 
 export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
@@ -81,6 +88,7 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
             />
 
             <DiagnosisSelection
+              name="diagnosisCodes"
               setFieldValue={setFieldValue}
               setFieldTouched={setFieldTouched}
               diagnoses={Object.values(diagnoses)}
@@ -93,11 +101,10 @@ export const AddPatientForm = ({ onSubmit, onCancel }: Props) => {
               component={TextField}
             />
 
-            <Field
+            <SelectField
               label="HealthCheckRating"
-              placeholder="HealthCheckRating"
               name="healthCheckRating"
-              component={TextField}
+              options={healthCheckRatingOptions}
             />
 
             <Grid>
