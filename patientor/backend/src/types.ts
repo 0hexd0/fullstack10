@@ -4,6 +4,12 @@ export enum Gender {
   Other = "other",
 }
 
+export enum EntryType {
+  HealthCheck = "HealthCheck",
+  Hospital = "Hospital",
+  OccupationalHealthcare = "OccupationalHealthcare",
+}
+
 export enum HealthCheckRating {
   "Healthy" = 0,
   "LowRisk" = 1,
@@ -11,18 +17,13 @@ export enum HealthCheckRating {
   "CriticalRisk" = 3,
 }
 
-// // Define special omit for unions
-// type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
-// // Define Entry without the 'id' property
-// type EntryWithoutId = UnionOmit<Entry, 'id'>;
-
 export interface Diagnosis {
   code: string;
   name: string;
   latin?: string;
 }
 
-interface BaseEntry {
+export interface BaseEntry {
   id: string;
   description: string;
   date: string;
@@ -31,25 +32,42 @@ interface BaseEntry {
 }
 
 interface HealthCheckEntry extends BaseEntry {
-  type: "HealthCheck";
+  type: EntryType.HealthCheck;
   healthCheckRating: HealthCheckRating;
 }
 
+export interface Discharge {
+  date: string;
+  criteria: string;
+}
+
 interface HospitalEntry extends BaseEntry {
-  type: "Hospital";
-  discharge: { date: string; criteria: string };
+  type: EntryType.Hospital;
+  discharge: Discharge;
+}
+
+export interface SickLeave {
+  startDate: string;
+  endDate: string;
 }
 
 interface OccupationalHealthcareEntry extends BaseEntry {
-  type: "OccupationalHealthcare";
+  type: EntryType.OccupationalHealthcare;
   employerName: string;
-  sickLeave?: { startDate: string; endDate: string };
+  sickLeave?: SickLeave;
 }
 
 export type Entry =
   | HospitalEntry
   | OccupationalHealthcareEntry
   | HealthCheckEntry;
+
+// Define special omit for unions
+type UnionOmit<T, K extends string | number | symbol> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
+export type NewEntry = UnionOmit<Entry, "id">;
 
 export interface Patient {
   id: string;
@@ -71,4 +89,16 @@ export type NewPatientFields = {
   ssn: unknown;
   gender: unknown;
   occupation: unknown;
+};
+
+export type EntryFields = {
+  type: unknown;
+  description: unknown;
+  date: unknown;
+  diagnosisCodes: unknown;
+  parseHealthCheckRating: unknown;
+  specialist: unknown;
+  employerName: unknown;
+  discharge: unknown;
+  sickLeave: unknown;
 };
